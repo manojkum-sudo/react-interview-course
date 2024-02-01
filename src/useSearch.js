@@ -1,17 +1,17 @@
-// import { useState } from "react";
+import { useState } from "react";
 
-// export const useSearch = (myObj) => {
-//   const [filterUser, setFilterUser] = useState([]);
+export const useSearch = (myObj) => {
+  const [filterUser, setFilterUser] = useState([]);
 
-//   const handleSearch = (value) => {
-//     const filterRes = myObj.filter((item) =>
-//       item.name.toLowerCase().includes(value.toLowerCase())
-//     );
-//     setFilterUser(filterRes);
-//   };
+  const handleSearch = (value) => {
+    const filterRes = myObj.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilterUser(filterRes);
+  };
 
-//   return { handleSearch, filterUser };
-// };
+  return { handleSearch, filterUser };
+};
 
 // TODO
 // 1. Data set/get localStorage
