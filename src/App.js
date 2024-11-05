@@ -1,121 +1,135 @@
-import React, { useRef, useState } from "react";
-
-const options = [
-  { label: "first", value: 1 },
-  { label: "second", value: 2 },
-  { label: "third", value: 3 },
-  { label: "fourth", value: 4 },
-  { label: "fifth", value: 5 },
-];
+import React, { useEffect, useState } from "react";
 
 const App = () => {
-  const [value, setValue] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [value, setValue] = useState(0);
+  const [number, setNumber] = useState(false);
+  const [uppercase, setUpperCase] = useState(false);
+  const [lowercase, setLowerCase] = useState(false);
+  const [symbol, setSymbol] = useState(false);
+  const [passChar, setPassChar] = useState("weak");
+  const [finalValue, setFinalValue] = useState("");
 
-  const handleSubmit = (data) => {
-    setValue((prevValue) => {
-      if (prevValue.some((item) => item.label === data.label)) {
-        return prevValue;
-      }
-      return [...prevValue, data];
-    });
-  };
+  useEffect(() => {
+    const char = finalValue?.length;
+    if (char > 0 && char < 5) {
+      setPassChar("Weak");
+    } else if (char >= 6 && char < 14) {
+      setPassChar("Good");
+    } else if (char > 14) {
+      setPassChar("Very strong");
+    }
+  }, [finalValue]);
 
-  const handleDelete = (index) => {
-    setValue((prevValue) => prevValue.filter((_, i) => i !== index));
-  };
+  const generatePassword = () => {
+    const characters = [];
+    if (uppercase) characters.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    if (lowercase) characters.push("abcdefghijklmnopqrstuvwxyz");
+    if (number) characters.push("0123456789");
+    if (symbol) characters.push("!@#$%^&*()_+");
 
-  const handleDeleteAll = () => {
-    setValue([]);
-    setIsOpen(false);
+    let password = "";
+    for (let i = 0; i < value; i++) {
+      const randomCharSet =
+        characters[Math.floor(Math.random() * characters.length)];
+      const randomChar =
+        randomCharSet[Math.floor(Math.random() * randomCharSet.length)];
+      password += randomChar;
+    }
+    setFinalValue(password);
   };
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+        alignItems: "center",
+        marginTop: 100,
+      }}
+    >
+      <h1>Password Generator</h1>
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
+          background: "#34495e",
+          width: 500,
+          padding: 10,
+          height: 300,
         }}
       >
-        <h1>Multi React search</h1>
-        <div
-          style={{
-            border: "1px solid #777",
-            width: 300,
-            minHeight: 30,
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "3px 10px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 10,
-            }}
-          >
-            {value.map((item, index) => (
-              <>
-                <div
-                  style={{
-                    border: "1px solid #777",
-                    background: "yellow",
-                    padding: "2px 5px",
-                  }}
-                  key={index}
-                >
-                  {item.label}
-                  <button
-                    onClick={() => handleDelete(index)}
-                    style={{ marginLeft: 5 }}
-                  >
-                    x
-                  </button>
-                </div>
-              </>
-            ))}
-          </div>
+        <p style={{ color: "white" }}>Password here: {finalValue}</p>
 
-          <div style={{ display: "flex", gap: 10 }}>
-            <div onClick={handleDeleteAll}>x</div>
-            <div onClick={() => setIsOpen(!isOpen)}>v</div>
-          </div>
+        <div>
+          <p style={{ color: "white" }}>Character length : {value}</p>
+          <input
+            style={{ width: 500 }}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            type="range"
+            min="0"
+            max="20"
+          />
         </div>
 
-        {isOpen && (
-          <div
-            style={{
-              border: "1px solid #777",
-              width: 320,
-              height: 140,
-            }}
-          >
-            <ul style={{ listStyleType: "none", padding: 0 }}>
-              {options.map((item, index) => (
-                <li
-                  style={{
-                    backgroundColor:
-                      currentIndex === index ? "red" : "transparent",
-                    padding: "2px 5px",
-                    cursor: "pointer",
-                  }}
-                  onMouseMove={() => setCurrentIndex(index)}
-                  key={index}
-                  onClick={() => handleSubmit(item)}
-                >
-                  {item.label}
-                </li>
-              ))}
-            </ul>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <input
+              type="checkbox"
+              checked={uppercase}
+              onChange={(e) => setUpperCase(e.target.checked)}
+            />
+            <label style={{ color: "white" }}>Include Uppercase letter</label>
           </div>
-        )}
+          <div>
+            <input
+              type="checkbox"
+              checked={lowercase}
+              onChange={(e) => setLowerCase(e.target.checked)}
+            />
+            <label style={{ color: "white" }}>Include Lowercase letter</label>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            gap: 160,
+          }}
+        >
+          <div>
+            <input
+              type="checkbox"
+              checked={number}
+              onChange={(e) => setNumber(e.target.checked)}
+            />
+            <label style={{ color: "white" }}>Include numbers</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              checked={symbol}
+              onChange={(e) => setSymbol(e.target.checked)}
+            />
+            <label style={{ color: "white" }}>Include symbol</label>
+          </div>
+        </div>
+        <p style={{ color: "white" }}>Strength : {passChar}</p>
+        <button
+          style={{
+            padding: 10,
+            background: "#2ecc71",
+            margin: "30px 0px 0px 170px",
+          }}
+          onClick={generatePassword}
+        >
+          Generate Password
+        </button>
       </div>
-    </>
+    </div>
   );
 };
 
